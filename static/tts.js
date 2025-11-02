@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const audioPlayer = document.getElementById("audio");
   const filenameInput = document.getElementById("filename");
 
-  // 🎛️ Presets for voices
   const presets = {
     normal: { rate: 1.0, pitch: 1.0 },
     male: { rate: 0.9, pitch: 0.8 },
@@ -23,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     calm: { rate: 0.8, pitch: 0.9 },
   };
 
-  // Update rate & pitch labels
   function updateLabels() {
     rateVal.textContent = parseFloat(rateInput.value).toFixed(1);
     pitchVal.textContent = parseFloat(pitchInput.value).toFixed(1);
@@ -41,14 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
   rateInput.addEventListener("input", updateLabels);
   pitchInput.addEventListener("input", updateLabels);
 
-  // Function to speak text using browser TTS
   function speakText(text, rate, pitch, presetName) {
     if (!text) return alert("Please enter some text!");
     synth.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     const voices = synth.getVoices();
 
-    // Try to select English voice (female preferred)
     utter.voice =
       voices.find(
         (v) => v.lang.startsWith("en") && v.name.includes("Female")
@@ -67,7 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
     synth.speak(utter);
   }
 
-  // Speak button
   speakBtn.addEventListener("click", () => {
     const text = textInput.value.trim();
     const presetName = voiceSelect.value;
@@ -76,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     speakText(text, rate, pitch, presetName);
   });
 
-  // Preview voice button
   previewBtn.addEventListener("click", () => {
     const presetName = voiceSelect.value;
     const preset = presets[presetName];
@@ -88,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-  // Stop button
   stopBtn.addEventListener("click", () => {
     synth.cancel();
     audioPlayer.pause();
@@ -96,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
     status.textContent = "⏹️ Stopped.";
   });
 
-  // Download button
   downloadBtn.addEventListener("click", async () => {
     const text = textInput.value.trim();
     if (!text) return alert("Enter some text to download!");
@@ -106,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     status.textContent = "💾 Generating audio...";
 
     try {
-      const res = await fetch("/speak", {
+      const res = await fetch("https://text2voice-ndt7.onrender.com/speak", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

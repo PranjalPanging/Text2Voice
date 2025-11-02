@@ -3,16 +3,16 @@ from gtts import gTTS
 from pydub import AudioSegment
 import os
 import io
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-# ✅ Use local ffmpeg if present
 if os.path.exists("ffmpeg/bin/ffmpeg.exe"):
     AudioSegment.converter = os.path.abspath("ffmpeg/bin/ffmpeg.exe")
     AudioSegment.ffmpeg = os.path.abspath("ffmpeg/bin/ffmpeg.exe")
     AudioSegment.ffprobe = os.path.abspath("ffmpeg/bin/ffprobe.exe")
 
-# 🎙️ Predefined voice styles
 VOICE_PRESETS = {
     "normal": {"speed": 1.0, "pitch": 0},
     "male": {"speed": 0.9, "pitch": -2},
@@ -55,32 +55,30 @@ def speak():
         preset = 'normal'
 
     try:
-        # Generate base speech
         tts = gTTS(text=text, lang=lang)
         tts_fp = io.BytesIO()
         tts.save(tts_fp)
         tts_fp.seek(0)
         sound = AudioSegment.from_file(tts_fp, format="mp3")
 
-        # Apply voice style
         style = VOICE_PRESETS[preset]
         sound = change_pitch_and_speed(sound, semitones=style["pitch"], speed=style["speed"])
 
-        # Export processed audio
-        os.makedirs("output", exist_ok=True)
-        output_path = os.path.join("output", f"{filename}.mp3")
-        sound.export(output_path, format="mp3")
+        mp3_fp = io.BytesIO()
+        sound.export(mp3_fp, format="mp3")
+        mp3_fp.seek(0)
 
-        # Send file for download
         return send_file(
-            output_path,
-            mimetype="audio/mpeg",
-            as_attachment=True,
-            download_name=f"{filename}.mp3"
-        )
+        mp3_fp,
+        mimetype="audio/mpeg",
+        as_attachment=True,
+        download_name=f"{filename}.mp3"
+)
+
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    if __name__ == '__main__':
+        port = int(os.environ.get("PORT", 10000))
+        app.run(host="0.0.0.0", port=port, debug=True)
