@@ -2,3 +2,4 @@ Flask
 gTTS
 pydub
 flask_cors
+gunicorn
