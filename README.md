@@ -1,6 +1,8 @@
 # Text2Voice: Convert Text to Voice
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![Issues](https://img.shields.io/github/issues/PranjalPanging/Video-MP3-Converter)](https://github.com/PranjalPanging/Video-MP3-Converter/issues)
+[![GitHub stars](https://img.shields.io/github/stars/PranjalPanging/Video-MP3-Converter?style=social)](https://github.com/PranjalPanging/Video-MP3-Converter/stargazers)
 
 ## Overview
 
