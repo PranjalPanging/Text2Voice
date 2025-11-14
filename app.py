@@ -46,7 +46,7 @@ def speak():
     text = data.get('text', '').strip()
     lang = data.get('lang', 'en')
     preset = data.get('voice', 'normal')
-    filename = data.get('filename', 'audio').strip() or 'audio'  # default name
+    filename = data.get('filename', 'audio').strip() or 'audio'
 
     if not text:
         return jsonify({'error': 'No text provided'}), 400
@@ -79,6 +79,6 @@ def speak():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-    if __name__ == '__main__':
-        port = int(os.environ.get("PORT", 10000))
-        app.run(host="0.0.0.0", port=port, debug=True)
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=True)
