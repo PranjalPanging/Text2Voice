@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const synth = window.speechSynthesis;
+
+  // --- Selectors ---
   const voiceSelect = document.getElementById("voice");
   const speakBtn = document.getElementById("speakBtn");
-  const previewBtn = document.getElementById("previewBtn");
   const stopBtn = document.getElementById("stopBtn");
   const downloadBtn = document.getElementById("downloadBtn");
   const textInput = document.getElementById("text");
@@ -11,20 +12,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const rateVal = document.getElementById("rateVal");
   const pitchVal = document.getElementById("pitchVal");
   const status = document.getElementById("status");
-  const audioPlayer = document.getElementById("audio");
   const filenameInput = document.getElementById("filename");
+  const visualizer = document.getElementById("visualizer");
+
+  const isLocal =
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost";
+  const API_URL = isLocal
+    ? "/speak"
+    : "https://text2voice-ndt7.onrender.com/speak";
 
   const presets = {
     normal: { rate: 1.0, pitch: 1.0 },
-    male: { rate: 0.9, pitch: 0.8 },
-    female: { rate: 1.2, pitch: 1.4 },
-    robot: { rate: 1.4, pitch: 1.6 },
-    calm: { rate: 0.8, pitch: 0.9 },
+    male: { rate: 0.8, pitch: 0.7 },
+    female: { rate: 1.1, pitch: 1.2 },
+    robot: { rate: 1.3, pitch: 0.4 },
+    calm: { rate: 0.7, pitch: 0.9 },
   };
 
   function updateLabels() {
-    rateVal.textContent = parseFloat(rateInput.value).toFixed(1);
-    pitchVal.textContent = parseFloat(pitchInput.value).toFixed(1);
+    rateVal.textContent = `${parseFloat(rateInput.value).toFixed(1)}x`;
+    pitchVal.textContent = `${parseFloat(pitchInput.value).toFixed(1)}x`;
+  }
+
+  function toggleVisualizer(show) {
+    if (show) {
+      visualizer.classList.replace("opacity-0", "opacity-100");
+    } else {
+      visualizer.classList.replace("opacity-100", "opacity-0");
+    }
   }
 
   voiceSelect.addEventListener("change", () => {
@@ -39,92 +55,104 @@ document.addEventListener("DOMContentLoaded", () => {
   rateInput.addEventListener("input", updateLabels);
   pitchInput.addEventListener("input", updateLabels);
 
-  function speakText(text, rate, pitch, presetName) {
-    if (!text) return alert("Please enter some text!");
+  speakBtn.addEventListener("click", () => {
+    const text = textInput.value.trim();
+    if (!text) {
+      status.textContent = "⚠️ Please enter text!";
+      return;
+    }
+
     synth.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     const voices = synth.getVoices();
 
-    utter.voice =
-      voices.find(
-        (v) => v.lang.startsWith("en") && v.name.includes("Female")
-      ) ||
-      voices.find((v) => v.lang.startsWith("en")) ||
-      voices[0];
+    if (voiceSelect.value === "female") {
+      utter.voice =
+        voices.find(
+          (v) => v.name.includes("Female") || v.name.includes("Zira")
+        ) || voices[0];
+    } else {
+      utter.voice =
+        voices.find(
+          (v) => v.name.includes("Male") || v.name.includes("David")
+        ) || voices[0];
+    }
 
-    utter.rate = rate;
-    utter.pitch = pitch;
+    utter.rate = parseFloat(rateInput.value);
+    utter.pitch = parseFloat(pitchInput.value);
 
-    status.textContent = `Speaking (${presetName})...`;
-
-    utter.onend = () => (status.textContent = "✅ Done speaking!");
-    utter.onerror = () => (status.textContent = "❌ Error during speech.");
+    utter.onstart = () => {
+      status.textContent = "🎙️ Previewing...";
+      toggleVisualizer(true);
+    };
+    utter.onend = () => {
+      status.textContent = "✅ Preview done";
+      toggleVisualizer(false);
+    };
 
     synth.speak(utter);
-  }
-
-  speakBtn.addEventListener("click", () => {
-    const text = textInput.value.trim();
-    const presetName = voiceSelect.value;
-    const rate = parseFloat(rateInput.value);
-    const pitch = parseFloat(pitchInput.value);
-    speakText(text, rate, pitch, presetName);
-  });
-
-  previewBtn.addEventListener("click", () => {
-    const presetName = voiceSelect.value;
-    const preset = presets[presetName];
-    speakText(
-      `This is a preview of the ${presetName} voice.`,
-      preset.rate,
-      preset.pitch,
-      presetName
-    );
   });
 
   stopBtn.addEventListener("click", () => {
     synth.cancel();
-    audioPlayer.pause();
-    audioPlayer.currentTime = 0;
-    status.textContent = "⏹️ Stopped.";
+    status.textContent = "⏹️ Stopped";
+    toggleVisualizer(false);
   });
 
   downloadBtn.addEventListener("click", async () => {
     const text = textInput.value.trim();
-    if (!text) return alert("Enter some text to download!");
-    const preset = voiceSelect.value;
-    const fileName = filenameInput.value.trim() || "speech";
+    if (!text) {
+      status.textContent = "⚠️ Nothing to export!";
+      return;
+    }
 
-    status.textContent = "💾 Generating audio...";
+    const fileName = filenameInput.value.trim() || "audio";
+    status.textContent = "⏳ Processing export...";
+    toggleVisualizer(true);
+
+    console.log(`Sending request to: ${API_URL}`);
 
     try {
-      const res = await fetch("https://text2voice-ndt7.onrender.com/speak", {
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text,
+          text: text,
           lang: "en",
-          voice: preset,
+          voice: voiceSelect.value,
           filename: fileName,
         }),
       });
-      if (!res.ok) throw new Error("Server error");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${fileName}.mp3`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Server error");
+      }
 
-      status.textContent = `✅ Audio downloaded as ${fileName}.mp3`;
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.style.display = "none";
+      a.href = url;
+      a.download = `${fileName}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      status.textContent = `✅ Saved: ${fileName}.mp3`;
     } catch (err) {
-      console.error(err);
-      status.textContent = "❌ Error generating audio.";
+      console.error("Export Error:", err);
+      status.textContent = `❌ Error: ${err.message}`;
+    } finally {
+      toggleVisualizer(false);
     }
   });
 
   updateLabels();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = synth.getVoices;
+  }
 });

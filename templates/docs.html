@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentation | Text2Voice Core</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, hsla(210,100%,93%,1) 0, transparent 50%), 
+                              radial-gradient(at 50% 0%, hsla(225,100%,90%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 0%, hsla(210,100%,93%,1) 0, transparent 50%);
+            scroll-behavior: smooth;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        code { font-family: 'JetBrains Mono', monospace; }
+
+        .nav-link.active {
+            color: #2563eb;
+            font-weight: 700;
+            background: rgba(37, 99, 235, 0.05);
+            border-right: 3px solid #2563eb;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+    <nav class="fixed top-0 w-full z-50 py-4 px-8 glass flex justify-between items-center border-b border-slate-200/50">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='/'">
+            <div class="p-1.5 bg-blue-600 rounded-lg text-white">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-slate-800">Text2Voice <span class="text-blue-600">Docs</span></span>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="/" class="text-sm font-semibold text-slate-600 hover:text-blue-600 transition">Back to App</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 pt-24 pb-12 flex flex-col lg:flex-row gap-10">
+        
+        <aside class="hidden lg:block w-64 sticky top-28 h-fit">
+            <div class="glass rounded-2xl p-4 border border-slate-200/60">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 px-3">Setup Guide</p>
+                <nav class="space-y-1">
+                    <a href="#overview" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-xl transition">Overview</a>
+                    <a href="#clone" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-xl transition">01. Clone GitHub</a>
+                    <a href="#activate" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-xl transition">02. Environment</a>
+                    <a href="#install" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-xl transition">03. Requirements</a>
+                    <a href="#run" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-xl transition">04. Run App</a>
+                </nav>
+            </div>
+        </aside>
+
+        <main class="flex-1 max-w-4xl">
+            <div class="glass rounded-3xl p-8 md:p-12 shadow-xl shadow-blue-100/50">
+                
+                <section id="overview" class="mb-16 scroll-mt-28">
+                    <h1 class="text-3xl font-bold text-slate-900 mb-6">Documentation Index</h1>
+                    <p class="text-slate-600 leading-relaxed mb-6">
+                        Welcome to the official technical documentation for the <span class="font-semibold text-blue-600">Text2Voice</span> synthesis engine. Follow the steps below to deploy the application on your local workstation.
+                    </p>
+                    <div class="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex gap-3 items-start">
+                        <i data-lucide="terminal" class="w-5 h-5 text-blue-600 mt-0.5"></i>
+                        <p class="text-sm text-blue-700">Ensure you have <strong>Python 3.9+</strong> and <strong>FFmpeg</strong> installed globally before proceeding.</p>
+                    </div>
+                </section>
+
+                <hr class="border-slate-200/60 mb-16">
+
+                <section id="clone" class="mb-16 scroll-mt-28">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">STEP 01</span>
+                        <h2 class="text-xl font-bold text-slate-800">Clone from GitHub</h2>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-6">Pull the latest stable branch of the repository to your local machine.</p>
+                    <div class="bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-800">
+                        <code class="text-blue-400 block mb-2">$ git clone https://github.com/PranjalPanging/text2voice.git</code>
+                        <code class="text-slate-300 block">$ cd text2voice</code>
+                    </div>
+                </section>
+
+                <section id="activate" class="mb-16 scroll-mt-28">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">STEP 02</span>
+                        <h2 class="text-xl font-bold text-slate-800">Activate Environment</h2>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-6">Initialize and activate your virtual environment (venv) to isolate dependencies.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase block mb-3">Windows (PowerShell)</span>
+                            <code class="text-emerald-400">.\venv\Scripts\Activate.ps1</code>
+                        </div>
+                        <div class="bg-slate-900 rounded-2xl p-5 border border-slate-800">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase block mb-3">macOS / Linux</span>
+                            <code class="text-emerald-400">source venv/bin/activate</code>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="install" class="mb-16 scroll-mt-28">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">STEP 03</span>
+                        <h2 class="text-xl font-bold text-slate-800">Install requirements.txt</h2>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-6">Install all required Python libraries via the pip package manager.</p>
+                    <div class="bg-slate-900 rounded-2xl p-6 border-l-4 border-blue-500">
+                        <code class="text-slate-300 font-bold tracking-wide">pip install -r <span class="text-amber-400">requirements.txt</span></code>
+                    </div>
+                </section>
+
+                <section id="run" class="mb-8 scroll-mt-28">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg">STEP 04</span>
+                        <h2 class="text-xl font-bold text-slate-800">Run the Application</h2>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-6">Launch the Flask server. The app will be accessible at <code>http://127.0.0.1:5000</code>.</p>
+                    <div class="bg-slate-900 rounded-2xl p-6 mb-6">
+                        <code class="text-blue-400">python app.py</code>
+                    </div>
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-500 italic">Expected Output: * Running on http://127.0.0.1:5000/</span>
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <footer class="py-12 text-center mt-auto">
+        <div class="flex justify-center gap-6 mb-6">
+            <a href="https://linkedin.com/in/pranjalpanging/" class="text-slate-400 hover:text-blue-600 transition"><i data-lucide="linkedin"></i></a>
+            <a href="https://instagram.com/pangnosis/" class="text-slate-400 hover:text-pink-500 transition"><i data-lucide="instagram"></i></a>
+            <a href="https://github.com/PranjalPanging/" class="text-slate-400 hover:text-slate-500 transition"><i data-lucide="github"></i></a>
+
+        </div>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">Documentation &copy; 2025 Pranjal Panging</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
